@@ -1,0 +1,129 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cancel-sold-items
+  annotations:
+    kube-score/ignore: |
+      container-security-context-user-group-id,
+      pod-networkpolicy,
+spec:
+  schedule: '*/5 * * * *'
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 180
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      parallelism: 1
+      completions: 1
+      backoffLimit: 3
+      template:
+        spec:
+          containers:
+            - name: curl
+              image: curlimages/curl:8.00.1
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: env
+              env:
+                - name: USER_NAME
+                - name: USER_EMAIL
+                - name: GOOGLE_SHEET_ID
+                - name: SELENIUM_DESIRED_CAPABILITIES
+                - name: GOOGLE_CREDENTIALS
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+              resources:
+                limits:
+                  memory: 256Mi
+                  cpu: 250m
+                  ephemeral-storage: 256Mi
+              securityContext:
+                readOnlyRootFilesystem: true
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+              command:
+                - sh
+                - -c
+                - |
+                  while (true); do
+                    sh -x /scripts/cancel-sold-items.sh
+                    if [ ! $? -eq 6 ]; then
+                      break
+                    fi
+                  done
+          volumes:
+            - name: scripts
+              configMap:
+                name: scripts
+                defaultMode: 0775
+          restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: request-login
+  annotations:
+    kube-score/ignore: |
+      container-security-context-user-group-id,
+      pod-networkpolicy,
+spec:
+  schedule: 0 12 * * *
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 180
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      parallelism: 1
+      completions: 1
+      backoffLimit: 3
+      template:
+        spec:
+          containers:
+            - name: curl
+              image: curlimages/curl:8.00.1
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: env
+              env:
+                - name: USER_NAME
+                - name: USER_EMAIL
+                - name: GOOGLE_SHEET_ID
+                - name: SELENIUM_DESIRED_CAPABILITIES
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+              resources:
+                limits:
+                  memory: 256Mi
+                  cpu: 250m
+                  ephemeral-storage: 256Mi
+              securityContext:
+                readOnlyRootFilesystem: true
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+              command:
+                - sh
+                - -c
+                - |
+                  while (true); do
+                    sh -x /scripts/request-login.sh
+                    if [ ! $? -eq 6 ]; then
+                      break
+                    fi
+                  done
+          volumes:
+            - name: scripts
+              configMap:
+                name: scripts
+                defaultMode: 0775
+          restartPolicy: Never

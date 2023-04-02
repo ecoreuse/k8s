@@ -1,0 +1,96 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium
+  annotations:
+    kube-score/ignore: |
+      container-security-context-readonlyrootfilesystem,
+      container-security-context-user-group-id,
+      pod-networkpolicy,
+spec:
+  selector:
+    matchLabels:
+      app: selenium
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: selenium
+    spec:
+      containers:
+        - name: selenium
+          image: seleniarm/standalone-chromium:103.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4444
+            - containerPort: 7900
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+              ephemeral-storage: 512Mi
+          readinessProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 7900
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            runAsNonRoot: true
+          volumeMounts:
+            - name: user-data-dir
+              mountPath: /home/seluser/.config/chromium
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: user-data-dir
+          persistentVolumeClaim:
+            claimName: selenium
+        - name: dshm
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selenium
+spec:
+  type: NodePort
+  selector:
+    app: selenium
+  ports:
+    - name: hub
+      port: 4444
+      targetPort: 4444
+    - name: novnc
+      port: 7900
+      targetPort: 7900
+      nodePort: 30079
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: selenium
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: selenium
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: selenium
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
