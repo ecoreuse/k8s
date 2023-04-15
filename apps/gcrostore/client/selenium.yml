@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: selenium
-          image: seleniarm/standalone-chromium:103.0
+          image: seleniarm/standalone-chromium:111.0
           imagePullPolicy: Always
           ports:
             - containerPort: 4444
