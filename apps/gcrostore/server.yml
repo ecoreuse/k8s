@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: gcrostore
-          image: ghcr.io/huisint/gcrostore:0.0.6
+          image: ghcr.io/huisint/gcrostore:0.0.7
           imagePullPolicy: Always
           env:
             - name: SMTP_HOST
