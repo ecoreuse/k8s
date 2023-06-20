@@ -68,6 +68,7 @@ spec:
     - name: hub
       port: 4444
       targetPort: 4444
+      nodePort: 34444
     - name: novnc
       port: 7900
       targetPort: 7900
