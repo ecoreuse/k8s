@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: gcrostore
-          image: ghcr.io/huisint/gcrostore:0.0.8
+          image: ghcr.io/huisint/gcrostore:0.0.9
           imagePullPolicy: Always
           env:
             - name: SMTP_HOST
@@ -41,6 +41,7 @@ spec:
             - gcrostore:app
             - --host=0.0.0.0
             - --port=8080
+            - --log-config=/config/logging-config.yml
           resources:
             limits:
               memory: 512Mi
@@ -58,6 +59,41 @@ spec:
             timeoutSeconds: 1
           securityContext:
             readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: gcrostore-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gcrostore-config
+data:
+  logging-config.yml: |
+    version: 1
+    formatters:
+      default:
+        '()': uvicorn.logging.DefaultFormatter
+        fmt: '%(levelprefix)s %(message)s'
+        use_colors: null
+    handlers:
+      default:
+        class: logging.StreamHandler
+        formatter: default
+        stream: ext://sys.stderr
+    loggers:
+      crostore:
+        handlers:
+          - default
+        level: DEBUG
+      gcrosotre:
+        handlers:
+          - default
+        level: DEBU
 ---
 apiVersion: v1
 kind: Service
