@@ -51,7 +51,7 @@ spec:
       volumes:
         - name: user-data-dir
           persistentVolumeClaim:
-            claimName: selenium
+            claimName: selenium-user-data
         - name: dshm
           emptyDir:
             medium: Memory
@@ -61,25 +61,22 @@ kind: Service
 metadata:
   name: selenium
 spec:
-  type: NodePort
   selector:
     app: selenium
   ports:
     - name: hub
       port: 4444
       targetPort: 4444
-      nodePort: 34444
     - name: novnc
       port: 7900
       targetPort: 7900
-      nodePort: 30079
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: selenium
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: selenium
@@ -87,7 +84,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: selenium
+  name: selenium-user-data
 spec:
   resources:
     requests:
