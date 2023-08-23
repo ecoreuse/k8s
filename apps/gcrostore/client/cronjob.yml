@@ -26,13 +26,10 @@ spec:
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
-                    name: env
+                    name: script-env
+                - secretRef:
+                    name: script-secret
               env:
-                - name: USER_NAME
-                - name: USER_EMAIL
-                - name: GOOGLE_SHEET_ID
-                - name: SELENIUM_DESIRED_CAPABILITIES
-                - name: GOOGLE_CREDENTIALS
                 - name: POD_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -91,12 +88,10 @@ spec:
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
-                    name: env
+                    name: script-env
+                - secretRef:
+                    name: script-secret
               env:
-                - name: USER_NAME
-                - name: USER_EMAIL
-                - name: GOOGLE_SHEET_ID
-                - name: SELENIUM_DESIRED_CAPABILITIES
                 - name: POD_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -127,3 +122,23 @@ spec:
                 name: scripts
                 defaultMode: 0775
           restartPolicy: Never
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: script-env
+data:
+  GCROSTORE_HOST: gcrostore.default.svc.cluster.local
+  SELENIUM_HOST: selenium
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: script-secret
+# type: Opaque
+# data:
+#   USER_NAME: ''
+#   USER_EMAIL: ''
+#   GOOGLE_SHEET_ID: ''
+#   SELENIUM_DESIRED_CAPABILITIES: ''
+#   GOOGLE_CREDENTIALS: ''
