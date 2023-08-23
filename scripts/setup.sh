@@ -4,12 +4,11 @@ set -euC
 set -o pipefail
 
 addons=(
-    "dns"
     "dashboard"
     "ingress"
-    "metallb:192.168.1.100-192.168.1.200"
-    "community"
+    "hostpath-storage"
     # Community addons
+    "community"
 )
 
 # Install addons
