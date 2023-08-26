@@ -7,10 +7,6 @@ resources:
   - selenium.yml
 
 configMapGenerator:
-  - name: env
-    literals:
-      - GCROSTORE_HOST=gcrostore.default.svc.cluster.local
-      - SELENIUM_HOST=selenium
   - name: scripts
     files:
       - scripts/cancel-sold-items.sh

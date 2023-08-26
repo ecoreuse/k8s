@@ -25,15 +25,9 @@ spec:
         - name: gcrostore
           image: ghcr.io/huisint/gcrostore:0.0.9
           imagePullPolicy: Always
-          env:
-            - name: SMTP_HOST
-              value: postfix.default.svc.cluster.local
-            - name: SMTP_PORT
-              value: '25'
-            - name: SMTP_FROM
-              value: Crostore <ecoreuse9@gmail.com>
-            - name: CROSTORE_SELENIUM_WAIT
-              value: '30'
+          envFrom:
+            - configMapRef:
+                name: gcrostore-env
           ports:
             - containerPort: 8080
           command:
@@ -71,6 +65,16 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: gcrostore-env
+data:
+  SMTP_HOST: postfix.default.svc.cluster.local
+  SMTP_PORT: '25'
+  SMTP_FROM: Crostore <ecoreuse9@gmail.com>
+  CROSTORE_SELENIUM_WAIT: '30'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: gcrostore-config
 data:
   logging-config.yml: |
@@ -80,11 +84,19 @@ data:
         '()': uvicorn.logging.DefaultFormatter
         fmt: '%(levelprefix)s %(message)s'
         use_colors: null
+      access:
+        '()': uvicorn.logging.AccessFormatter
+        fmt: >
+          '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
     handlers:
       default:
         class: logging.StreamHandler
         formatter: default
         stream: ext://sys.stderr
+      access:
+        class: logging.StreamHandler
+        formatter: access
+        stream: ext://sys.stdout
     loggers:
       crostore:
         handlers:
@@ -93,7 +105,15 @@ data:
       gcrosotre:
         handlers:
           - default
-        level: DEBU
+        level: DEBUG
+      uvicorn.error:
+        handlers:
+          - default
+        level: INFO
+      uvicorn.access:
+        handlers:
+          - access
+        level: INFO
 ---
 apiVersion: v1
 kind: Service
@@ -102,18 +122,18 @@ metadata:
 spec:
   selector:
     app: gcrostore
+  type: NodePort
   ports:
     - port: 80
       targetPort: 8080
       nodePort: 30080
-  type: NodePort
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: gcrostore
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: gcrostore
