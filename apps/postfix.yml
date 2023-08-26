@@ -26,16 +26,9 @@ spec:
         - name: postfix
           image: juanluisbaptiste/postfix:1.7.1
           imagePullPolicy: Always
-          env:
-            - name: SERVER_HOSTNAME
-              value: crostore.com
-            - name: SMTP_SERVER
-              value: smtp.gmail.com
-            - name: SMTP_PORT
-              value: '587'
-            - name: SMTP_USERNAME
-              value: ecoreuse9@gmail.com
           envFrom:
+            - configMapRef:
+                name: postfix-env
             - secretRef:
                 name: postfix
           ports:
@@ -56,6 +49,16 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postfix-env
+data:
+  SERVER_HOSTNAME: crostore.com
+  SMTP_SERVER: smtp.gmail.com
+  SMTP_PORT: '587'
+  SMTP_USERNAME: ecoreuse9@gmail.com
 ---
 apiVersion: v1
 kind: Service
