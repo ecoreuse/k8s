@@ -128,7 +128,7 @@ kind: ConfigMap
 metadata:
   name: script-env
 data:
-  GCROSTORE_HOST: gcrostore.default.svc.cluster.local
+  GCROSTORE_HOST: gcrostore.default.svc
   SELENIUM_HOST: selenium
 # ---
 # apiVersion: v1
