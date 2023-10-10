@@ -1,14 +1,15 @@
 {
-  "name": "Ubuntu",
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.04",
+  "name": "Debian",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:debian",
   "mounts": [],
   "runArgs": [],
   "features": {
-    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+    "ghcr.io/devcontainers-contrib/features/apt-get-packages:1": {
       "packages": "bash-completion"
     },
+    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/python:1": {}
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
   },
   "customizations": {
     "vscode": {
@@ -16,6 +17,7 @@
       "extensions": [
         "bierner.markdown-mermaid",
         "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
         "ms-azuretools.vscode-docker",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "redhat.vscode-yaml",
@@ -24,14 +26,8 @@
       ]
     }
   },
-  "onCreateCommand": {
-    "Upgrade pip": "pip install -U pip"
-  },
   "postCreateCommand": {
-    "Install bash-completion": "echo 'source /etc/bash_completion' >> ~/.bashrc",
-    "Install git-completion": "echo 'source /usr/share/bash-completion/completions/git' >> ~/.bashrc",
-    "Install pre-commit": "pip install --user pre-commit && pre-commit install",
-    "Install kubectl": "./.devcontainer/install-kubectl.sh"
+    "install pre-commit": "pre-commit install"
   },
   "remoteUser": "vscode",
   "remoteEnv": {
