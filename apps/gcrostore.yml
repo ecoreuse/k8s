@@ -67,7 +67,7 @@ kind: ConfigMap
 metadata:
   name: gcrostore-env
 data:
-  SMTP_HOST: postfix.default.svc.cluster.local
+  SMTP_HOST: postfix.default.svc
   SMTP_PORT: '25'
   SMTP_FROM: Crostore <ecoreuse9@gmail.com>
   CROSTORE_SELENIUM_WAIT: '30'
@@ -86,8 +86,8 @@ data:
         use_colors: null
       access:
         '()': uvicorn.logging.AccessFormatter
-        fmt: >
-          '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+        fmt: >-
+          %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s
     handlers:
       default:
         class: logging.StreamHandler
