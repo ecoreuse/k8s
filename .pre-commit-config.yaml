@@ -63,7 +63,7 @@ repos:
       - id: kubeconform
         name: Validate Kubernetes manifests
         language: docker_image
-        entry: ghcr.io/yannh/kubeconform:v0.6.1
+        entry: ghcr.io/yannh/kubeconform:v0.6.3
         files: apps\/(.+)\.yml
         args:
           - -ignore-missing-schemas
@@ -71,7 +71,7 @@ repos:
       - id: kube-score
         name: Lint Kubernetes manifests
         language: docker_image
-        entry: zegl/kube-score:v1.16.1
+        entry: zegl/kube-score:v1.17.0
         files: apps\/(.+)\.yml
         args:
           - score
