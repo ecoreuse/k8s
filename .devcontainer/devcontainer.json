@@ -1,8 +1,6 @@
 {
   "name": "Debian",
   "image": "mcr.microsoft.com/vscode/devcontainers/base:debian",
-  "mounts": [],
-  "runArgs": [],
   "features": {
     "ghcr.io/devcontainers-contrib/features/apt-get-packages:1": {
       "packages": "bash-completion"
@@ -28,9 +26,5 @@
   },
   "postCreateCommand": {
     "install pre-commit": "pre-commit install"
-  },
-  "remoteUser": "vscode",
-  "remoteEnv": {
-    "KUBECONFIG": ".devcontainer/kubeconfig"
   }
 }
