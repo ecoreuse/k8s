@@ -4,12 +4,12 @@ set -euC
 set -o pipefail
 
 addons=(
-    "dashboard"
-    "hostpath-storage"
+  "dashboard"
+  "hostpath-storage"
 )
 
 # Install addons
 for addon in "${addons[@]}"; do
-    microk8s enable "$addon"
-    sleep 15
+  microk8s enable "$addon"
+  sleep 15
 done
