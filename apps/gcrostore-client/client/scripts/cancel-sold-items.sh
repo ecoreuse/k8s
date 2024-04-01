@@ -3,10 +3,10 @@
 set -euC
 
 curl -X 'POST' \
-'http://'"$GCROSTORE_HOST"'/v0/cancel/all' \
--H 'accept: application/json' \
--H 'Content-Type: application/json' \
--d '{
+  'http://'"$GCROSTORE_HOST"'/v0/cancel/all' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
     "user": {
         "name": "'"$USER_NAME"'",
         "email": "'"$USER_EMAIL"'"
