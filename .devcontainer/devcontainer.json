@@ -1,6 +1,8 @@
 {
   "name": "Debian",
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:debian",
+  "dockerComposeFile": "compose.yml",
+  "service": "main",
+  "workspaceFolder": "/workspaces/main",
   "features": {
     "ghcr.io/devcontainers-contrib/features/apt-get-packages:1": {
       "packages": "bash-completion"
@@ -11,7 +13,6 @@
   },
   "customizations": {
     "vscode": {
-      "settings": {},
       "extensions": [
         "bierner.markdown-mermaid",
         "esbenp.prettier-vscode",
