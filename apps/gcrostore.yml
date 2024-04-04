@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: gcrostore
-          image: ghcr.io/huisint/gcrostore:0.1.0
+          image: ghcr.io/huisint/gcrostore:0.1.1
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
