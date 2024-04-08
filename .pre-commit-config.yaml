@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
@@ -18,7 +18,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
-    rev: 0.2.2
+    rev: 0.2.3
     hooks:
       - id: yamlfmt
         name: Format YAML files
@@ -27,7 +27,7 @@ repos:
           - --sequence=4
           - --offset=2
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.30.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
         name: Lint YAML files
